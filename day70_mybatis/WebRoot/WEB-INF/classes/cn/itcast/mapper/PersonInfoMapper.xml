@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.itcast.mapper.PersonInfoMapper">
+	<resultMap type="cn.itcast.domain.Person" id="personInfoRM">
+		<id property="id" column="ID"/>
+		<result property="name" column="USER_NAME"/>
+		<result property="age" column="AGE"/>
+		<result property="remark" column="REMARK"/>
+	</resultMap>
+	
+	<!-- 使用继承方式，配置对一关联关系  -->
+	<resultMap type="cn.itcast.domain.Person" id="personPersonInfoRM" extends="personInfoRM">
+		<association property="personInfo" javaType="cn.itcast.domain.PersonInfo">
+			<id property="id" column="INFOID"/>
+			<result property="station" column="STATION"/>
+			<result property="joinDate" column="JOIN_DATE"/>
+		</association>
+	</resultMap>
+	
+	<!-- 使用继承方式，配置对多的关联关系 -->
+	<resultMap type="cn.itcast.domain.Person" id="personBookRM" extends="personPersonInfoRM">
+		<collection property="books" ofType="cn.itcast.domain.Book">
+			<id property="id" column="BOOK_ID"/>
+			<result property="name" column="BOOK_NAME"/>
+			<result property="money" column="MONEY"/>
+		</collection>
+	</resultMap>
+	
+	<!-- 查询，人员和人员扩展信息 -->
+	<select id="findPersonInfo" parameterType="map" resultMap="personPersonInfoRM">
+SELECT
+	p.id,p.user_name,p.age,p.remark,
+	i.id AS infoid,i.station,i.join_date
+FROM
+(SELECT id,user_name,age,remark FROM person) p
+LEFT JOIN
+(SELECT id,station,join_date FROM person_info) i
+ON p.id=i.id
+<where>
+	<if test="name!=null">user_name=#{name}</if>
+</where>
+	</select>
+	
+	<!-- 查询某个人的人员信息，（扩展信息，书籍） -->
+	<select id="findPersonInfoBook" parameterType="map" resultMap="personBookRM">
+SELECT
+	p.id,p.name,p.age,p.remark,
+	p.infoid,p.station,p.join_date,
+	b.book_id,b.book_name,b.money
+FROM
+(
+	SELECT 
+		p.id,p.name,p.age,p.remark,
+		i.infoid,i.station,i.join_date
+	FROM
+		(SELECT id,user_name AS NAME,age,remark FROM person
+			where 1=1
+			<if test="name!=null"> and p.name=#{name}</if>
+		) p
+	LEFT JOIN
+		(SELECT id AS infoid,station,join_date FROM person_info
+			where 1=1
+			<if test="name!=null"> and p.name=#{name}</if>
+		) i
+	ON p.id=i.infoid
+) p
+LEFT JOIN
+	(SELECT id AS book_id,NAME AS book_name,money,person_id FROM book) b
+ON p.id=b.person_id
+
+
+	</select>
+
+</mapper>
