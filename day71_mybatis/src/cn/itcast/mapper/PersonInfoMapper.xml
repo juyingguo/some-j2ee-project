@@ -30,45 +30,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<!-- 查询，人员和人员扩展信息 -->
 	<select id="findPersonInfo" parameterType="map" resultMap="personPersonInfoRM">
-		SELECT
-			p.id,p.user_name,p.age,p.remark,
-			i.id AS infoid,i.station,i.join_date
-		FROM
-		(SELECT id,user_name,age,remark FROM person) p
-		LEFT JOIN
-		(SELECT id,station,join_date FROM person_info) i
-		ON p.id=i.id
-		<where>
-			<if test="name!=null">user_name=#{name}</if>
-		</where>
+SELECT
+	p.id,p.user_name,p.age,p.remark,
+	i.id AS infoid,i.station,i.join_date
+FROM
+(SELECT id,user_name,age,remark FROM person) p
+LEFT JOIN
+(SELECT id,station,join_date FROM person_info) i
+ON p.id=i.id
+<where>
+	<if test="name!=null">user_name=#{name}</if>
+</where>
 	</select>
 	
 	<!-- 查询某个人的人员信息，（扩展信息，书籍） -->
 	<select id="findPersonInfoBook" parameterType="map" resultMap="personBookRM">
-		SELECT
-			p.id,p.name,p.age,p.remark,
-			p.infoid,p.station,p.join_date,
-			b.book_id,b.book_name,b.money
-		FROM
-		(
-			SELECT
-				p.id,p.name,p.age,p.remark,
-				i.infoid,i.station,i.join_date
-			FROM
-				(SELECT id,user_name AS name,age,remark FROM person
-					where 1=1
-					<if test="name!=null"> and user_name=#{name}</if>
-				) p
-			LEFT JOIN
-				(SELECT id AS infoid,station,join_date FROM person_info
-					/*where 1=1*/
-					<!--<if test="name!=null"> and p.name=#{name}</if>-->
-				) i
-			ON p.id=i.infoid
+SELECT
+	p.id,p.name,p.age,p.remark,
+	p.infoid,p.station,p.join_date,
+	b.book_id,b.book_name,b.money
+FROM
+(
+	SELECT 
+		p.id,p.name,p.age,p.remark,
+		i.infoid,i.station,i.join_date
+	FROM
+		(SELECT id,user_name AS NAME,age,remark FROM person
+			where 1=1
+			<if test="name!=null"> and user_name=#{name}</if>
 		) p
-		LEFT JOIN
-			(SELECT id AS book_id,NAME AS book_name,money,person_id FROM book) b
-		ON p.id=b.person_id
+	LEFT JOIN
+		(SELECT id AS infoid,station,join_date FROM person_info
+			where id in
+			(
+			SELECT id FROM person
+			where 1=1
+			<if test="name!=null"> and user_name=#{name}</if>			
+			)
+		) i
+	ON p.id=i.infoid
+) p
+LEFT JOIN
+	(SELECT id AS book_id,NAME AS book_name,money,person_id FROM book) b
+ON p.id=b.person_id
 
 
 	</select>

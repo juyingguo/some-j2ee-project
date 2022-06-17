@@ -1,5 +1,6 @@
 package cn.itcast.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  * @Company:	http://java.itcast.cn
  * @CreateDate:	2014年11月15日
  */
-public class PersonInfo {
+public class PersonInfo implements Serializable {
 	private Integer id;
 	private String station;
 	private Date joinDate;
@@ -30,13 +31,6 @@ public class PersonInfo {
 	public void setJoinDate(Date joinDate) {
 		this.joinDate = joinDate;
 	}
-
-	@Override
-	public String toString() {
-		return "PersonInfo{" +
-				"id=" + id +
-				", station='" + station + '\'' +
-				", joinDate=" + joinDate +
-				'}';
-	}
+	
+	
 }

@@ -1,12 +1,14 @@
 package cn.itcast.domain;
 
+import java.io.Serializable;
+
 /**
  * @Description:
  * @Author:		传智播客 java学院	陈子枢
  * @Company:	http://java.itcast.cn
  * @CreateDate:	2014年11月15日
  */
-public class Book {
+public class Book implements Serializable {
 	private Integer id;
 	private String name;
 	private Double money;
@@ -28,13 +30,5 @@ public class Book {
 	public void setMoney(Double money) {
 		this.money = money;
 	}
-
-	@Override
-	public String toString() {
-		return "Book{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				", money=" + money +
-				'}';
-	}
+	
 }

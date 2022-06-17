@@ -35,22 +35,20 @@ public class TestPersonInfo {
 	public void testPersonInfo(){
 		SqlSession session = factory.openSession();
 		Map map = new HashMap();
-		map.put("name","jin");
 		List<Person> personList = session.selectList("cn.itcast.mapper.PersonInfoMapper.findPersonInfo", map);
 		for(Person p : personList){
 			System.out.println(p);
 		}
 	}
 	
-	@Test	//查询某个人员的人员信息及书籍（人员和人员信息的一对一，人员和书籍的一对多)
+	@Test	//查询某个人员（人员和人员信息的一对一，人员和书籍的一对多
 	public void testPersonBook(){
 		SqlSession session = factory.openSession();
 		Map map = new HashMap();
-		map.put("name", "jin");
+		map.put("name", "jenny");
 		
 		List<Person> personList = session.selectList("cn.itcast.mapper.PersonInfoMapper.findPersonInfoBook", map);
 		System.out.println(personList.size());
-		System.out.println(personList);
 	}
 	
 }

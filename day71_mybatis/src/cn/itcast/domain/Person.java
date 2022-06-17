@@ -1,5 +1,6 @@
 package cn.itcast.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @Company:	http://java.itcast.cn
  * @CreateDate:	2014年11月15日
  */
-public class Person {
+public class Person implements Serializable {
 	private PersonInfo personInfo;	//对一关联
 	private List<Book> books;		//对多关联
 	
@@ -53,15 +54,5 @@ public class Person {
 		this.books = books;
 	}
 
-	@Override
-	public String toString() {
-		return "Person{" +
-				"personInfo=" + personInfo +
-				", books=" + books +
-				", id=" + id +
-				", name='" + name + '\'' +
-				", age=" + age +
-				", remark='" + remark + '\'' +
-				'}';
-	}
+
 }

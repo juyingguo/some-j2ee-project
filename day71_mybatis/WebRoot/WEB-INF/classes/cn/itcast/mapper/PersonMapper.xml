@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 配置命名空间，区别名称 -->
+<mapper namespace="cn.itcast.mapper.PersonMapper">
+	<!-- 使用二级缓存 -->
+	<!--cache type="org.mybatis.caches.ehcache.EhcacheCache"/-->
+
+	<!-- SQL片段 -->
+	<sql id="cols">id,user_name,age,remark</sql>
+
+	<!-- 中间，对象的属性和结果集的字段之间的对应关系 -->
+	<resultMap type="cn.itcast.domain.Person" id="personRM">
+		<!-- 主键映射 -->
+		<id property="id" column="ID"/>
+		<!-- 普通字段 property指实体的属性；column结果集的字段名称 -->
+		<result property="name" column="USER_NAME"/>
+		<result property="age" column="AGE"/>
+		<result property="remark" column="REMARK"/>
+		
+		<!-- 对象关联 -->
+		<!-- 人员和人员信息表一对一关系 -->
+		<association property="personInfo" javaType="cn.itcast.domain.PersonInfo">
+			<id property="id" column="ID"/>	
+			<result property="station" column="STATION"/>
+			<result property="joinDate" column="JOIN_DATE"/>
+		</association>
+	</resultMap>
+	
+	<!-- 查询，注意Mybatis中如果有填写集合类型，只填写集合中元素的类型  -->
+	<select id="find" parameterType="map" resultMap="personRM">
+		select <include refid="cols"/> from person
+		<where>
+		<if test="name!=null">and user_name like #{name}</if>
+		<if test="ageStart!=null">and age >= #{ageStart}</if>
+		<if test="ageEnd!=null"><![CDATA[and age <=]]> #{ageEnd}</if>
+		</where>
+		<if test="orderbycondition!=null">${orderbycondition}</if>
+	</select>
+	
+	<!-- 查询一个，按id查询 -->
+	<select id="get" parameterType="int" resultType="cn.itcast.domain.Person">
+		select<include refid="cols"/>from person
+		where id = #{pid}
+	</select>
+	
+	<!-- 新增 -->
+	<insert id="insert" parameterType="cn.itcast.domain.Person">
+		insert into person
+		(<include refid="cols"/>)
+		values
+		(#{id},#{name},#{age},#{remark})
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="cn.itcast.domain.Person">
+		update person
+		<set>
+			<if test="name!=null">user_name=#{name,jdbcType=VARCHAR},</if>
+			<if test="age!=null">age=#{age},</if>
+			<if test="remark!=null">remark=#{remark},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除一条 -->
+	<delete id="deleteById" parameterType="int">
+		delete from person
+		where id = #{pid}
+	</delete>
+	
+	<!-- 删除多条，整形数组 -->
+	<delete id="deleteArray" parameterType="int">
+		delete from person 
+		where id in
+		(
+		<foreach collection="array" item="id" separator=",">
+			#{id}	
+		</foreach>
+		)
+	</delete>
+	
+	<!-- 删除多条，LIST集合 -->
+	<delete id="deleteList" parameterType="int">
+		delete from person
+		where id in
+		<foreach collection="list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<!-- 删除多条,Map , ids 代表map中key -->
+	<delete id="deleteMap" parameterType="map">
+		delete from person
+		where id in
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>		
+	</delete>
+	
+	<!-- 获取记录总数 -->
+	<select id="count" resultType="int">
+		SELECT COUNT(*) FROM person
+	</select>
+</mapper>
