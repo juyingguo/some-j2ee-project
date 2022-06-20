@@ -100,4 +100,88 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="count" resultType="int">
 		SELECT COUNT(*) FROM person
 	</select>
+	<!-- 获取多条，整形数组 -->
+	<select id="selectListByArray" parameterType="Integer" resultMap="personRM">
+		select * from person
+		where id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 获取多条，String数组 -->
+	<select id="selectListByArrayString" parameterType="String" resultMap="personRM">
+		select * from person
+		where user_name in
+		<foreach collection="array" item="name" open="(" separator="," close=")">
+			#{name}
+		</foreach>
+	</select>
+	<!-- 获取多条，List -->
+	<select id="selectListByList" parameterType="Integer" resultMap="personRM">
+		select * from person
+		where id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<!-- 获取多条,Map , ids 代表map中key;
+	 parameterType可以为"HashMap"，也可以为map中的key对应的具体元素的类型，不使用该属性也正常（单独验证）
+	 -->
+	<select id="selectListByMap" parameterType="String" resultMap="personRM">
+		select * from person
+		where id in
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 获取多条,Map , _list 代表map中key;
+	 parameterType可以为"HashMap"，也可以为map中的key对应的具体元素的类型，不使用该属性也正常（单独验证）
+	 -->
+	<select id="selectListByMapList" resultMap="personRM">
+		select * from person
+		where id in
+		<foreach collection="_list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</select>
+
+	<update id="updateListByMapListCase">
+		update person set remark =
+		<foreach collection="_list" item="item" index="index"
+				 separator=" " open="case id" close="end">
+			when #{item} then #{item}
+		</foreach>
+		where id in
+		<foreach collection="_list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
+
+	<update id="updateListByMapListCase2">
+		update person set remark =
+		<!--<choose>
+			<when test='remark != null and remark != ""'>
+				case id
+				when id then 'test'
+				end
+			</when>
+		</choose>-->
+		/*case id -- 只对一行有效，第二行以后走else
+		when id>=0 then "e"
+		else "f"
+		end*/
+		/*case id --全部没生效
+		when user_name = 'aim' then "o"
+		else "p"
+		end*/
+		<foreach collection="_list" item="item" index="index"
+				 separator=" " open="case id" close="end">
+			when #{item} then #{item}
+		</foreach>
+		where id in
+		<foreach collection="_list" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	</update>
 </mapper>

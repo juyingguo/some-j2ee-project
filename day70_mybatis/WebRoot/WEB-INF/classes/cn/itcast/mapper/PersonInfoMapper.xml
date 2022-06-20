@@ -70,7 +70,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			(SELECT id AS book_id,NAME AS book_name,money,person_id FROM book) b
 		ON p.id=b.person_id
 
-
 	</select>
 
 </mapper>

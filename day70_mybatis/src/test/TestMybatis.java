@@ -143,4 +143,92 @@ public class TestMybatis {
 		int i = session.selectOne("cn.itcast.mapper.PersonMapper.count");
 		System.out.println(i);
 	}
+
+	@Test
+	//获取多条-数组
+	public void selectListByArray(){
+		SqlSession session = factory.openSession();
+		int[] ids = {5,6,7};
+		List<Person> objects = session.selectList("cn.itcast.mapper.PersonMapper.selectListByArray", ids);
+		System.out.println(objects);
+		session.commit();
+	}
+	@Test
+	//获取多条-数组,String
+	public void selectListByArrayString(){
+		SqlSession session = factory.openSession();
+		String[] ids = {"jin","pim"};
+		List<Person> objects = session.selectList("cn.itcast.mapper.PersonMapper.selectListByArrayString", ids);
+		System.out.println(objects);
+		session.commit();
+	}
+	//获取多条-List
+	@Test
+	public void selectListByList(){
+		SqlSession session = factory.openSession();
+		List<Integer> _list = new ArrayList<Integer>();
+		_list.add(5);
+		_list.add(6);
+		List<Person> objects = session.selectList("cn.itcast.mapper.PersonMapper.selectListByList", _list);
+		System.out.println(objects);
+		session.commit();
+	}
+	/**
+	 * 获取多条 MAP
+	 */
+	@Test
+	public void selectListByMap(){
+		SqlSession session = factory.openSession();
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		int[] ids = {5,6};
+		paraMap.put("ids", ids);
+		List<Person> objects = session.selectList("cn.itcast.mapper.PersonMapper.selectListByMap", paraMap);
+		System.out.println(objects);
+		session.commit();
+	}
+	/**
+	 * 获取多条 MAP
+	 */
+	@Test
+	public void selectListByMapList(){
+		SqlSession session = factory.openSession();
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		List<Integer> _list = new ArrayList<Integer>();
+		_list.add(5);
+		_list.add(6);
+		paraMap.put("_list", _list);
+		List<Person> objects = session.selectList("cn.itcast.mapper.PersonMapper.selectListByMapList", paraMap);
+		System.out.println(objects);
+		session.commit();
+	}
+	/**
+	 * 更新多条 MAP
+	 */
+	@Test
+	public void updateListByMapListCase(){
+		SqlSession session = factory.openSession();
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		List<Integer> _list = new ArrayList<Integer>();
+		_list.add(5);
+		_list.add(6);
+		paraMap.put("_list", _list);
+		int update = session.update("cn.itcast.mapper.PersonMapper.updateListByMapListCase", paraMap);
+		System.out.println(update);
+		session.commit();
+	}
+	/**
+	 * 更新多条 MAP
+	 */
+	@Test
+	public void updateListByMapListCase2(){
+		SqlSession session = factory.openSession();
+		Map<String,Object> paraMap = new HashMap<String,Object>();
+		List<Integer> _list = new ArrayList<Integer>();
+		_list.add(5);
+		_list.add(6);
+		paraMap.put("_list", _list);
+		int update = session.update("cn.itcast.mapper.PersonMapper.updateListByMapListCase2", paraMap);
+		System.out.println(update);
+		session.commit();
+	}
 }
